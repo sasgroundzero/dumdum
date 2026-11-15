@@ -1,0 +1,325 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>DumDum</title>
+<meta name="theme-color" content="#000000">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="DumDum">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" href="icon-180.png">
+<style>
+  :root { --bg: #000; --fg: #fff; --dim: #8a8a8a; --line: #333; }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; height: 100%; background: var(--bg); color: var(--fg); }
+  body {
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    font-size: 17px; line-height: 1.45;
+    padding: env(safe-area-inset-top) 20px env(safe-area-inset-bottom);
+    display: flex; flex-direction: column; min-height: 100%;
+    -webkit-text-size-adjust: 100%;
+  }
+  main { flex: 1; width: 100%; max-width: 480px; margin: 0 auto; }
+  [hidden] { display: none !important; }
+
+  /* Home */
+  .clock { padding: 44px 0 36px; }
+  .time { font-size: 64px; line-height: 1; letter-spacing: -2px; font-variant-numeric: tabular-nums; }
+  .date { color: var(--dim); margin-top: 10px; text-transform: uppercase; letter-spacing: 2px; font-size: 13px; }
+
+  .row { border-top: 1px solid var(--line); }
+  .row:last-child { border-bottom: 1px solid var(--line); }
+  .row > a, .row > form { display: flex; align-items: center; min-height: 68px; }
+  .row a { color: var(--fg); text-decoration: none; }
+  .row > a { justify-content: space-between; font-size: 22px; }
+  .row > a::after { content: "→"; color: var(--dim); }
+  .row > a:active, button:active { opacity: .5; }
+  .row label { font-size: 22px; flex: 0 0 auto; margin-right: 14px; }
+  input[type=tel], input[type=search] {
+    flex: 1; min-width: 0; height: 44px; padding: 0 10px;
+    background: var(--bg); color: var(--fg); font: inherit; font-size: 17px;
+    border: 0; border-bottom: 1px solid var(--dim); border-radius: 0;
+    -webkit-appearance: none; appearance: none; outline: none;
+  }
+  input:focus { border-bottom-color: var(--fg); }
+  input::placeholder { color: #666; }
+  button {
+    font: inherit; color: var(--bg); background: var(--fg); border: 0; border-radius: 0;
+    height: 44px; padding: 0 14px; margin-left: 10px; cursor: pointer;
+  }
+
+  /* Setup */
+  h1 { font-size: 22px; font-weight: 400; margin: 36px 0 6px; }
+  .lede { color: var(--dim); margin: 0 0 22px; font-size: 15px; }
+  .progress { height: 2px; background: var(--line); margin-bottom: 6px; }
+  .progress i { display: block; height: 100%; background: var(--fg); width: 0; transition: width .2s; }
+  .count { color: var(--dim); font-size: 13px; letter-spacing: 1px; margin-bottom: 14px; }
+  .step { border-top: 1px solid var(--line); padding: 16px 0; display: flex; gap: 14px; }
+  .step input { flex: 0 0 26px; width: 26px; height: 26px; margin: 2px 0 0; accent-color: #fff;
+    -webkit-appearance: none; appearance: none; border: 1px solid var(--fg); background: var(--bg); }
+  .step input:checked { background: var(--fg); box-shadow: inset 0 0 0 5px var(--bg); }
+  .step h2 { font-size: 17px; font-weight: 700; margin: 0 0 6px; }
+  .step p, .step ol { margin: 0 0 8px; font-size: 15px; color: #cfcfcf; }
+  .step ol { padding-left: 20px; }
+  .step .path { color: var(--fg); }
+  .step.done h2 { text-decoration: line-through; color: var(--dim); }
+  .step.done .body > :not(h2) { display: none; }
+  .note { border: 1px solid var(--line); padding: 12px; font-size: 14px; color: var(--dim); margin: 18px 0; }
+  .choice { display: flex; gap: 10px; margin-top: 8px; }
+  .choice button { margin: 0; flex: 1; background: var(--bg); color: var(--fg); border: 1px solid var(--line); }
+  .choice button[aria-pressed=true] { background: var(--fg); color: var(--bg); border-color: var(--fg); }
+
+  nav { display: flex; max-width: 480px; width: 100%; margin: 24px auto 0; border-top: 1px solid var(--line); }
+  nav button { flex: 1; margin: 0; height: 52px; background: var(--bg); color: var(--dim);
+    text-transform: uppercase; letter-spacing: 2px; font-size: 13px; }
+  nav button[aria-current=page] { color: var(--fg); }
+</style>
+</head>
+<body>
+
+<main id="home">
+  <div class="clock">
+    <div class="time" id="time">--:--</div>
+    <div class="date" id="date">&nbsp;</div>
+  </div>
+
+  <div class="row">
+    <form id="call" autocomplete="off">
+      <label for="num">Phone</label>
+      <input id="num" type="tel" inputmode="tel" placeholder="number" aria-label="Phone number">
+      <button type="submit">Call</button>
+    </form>
+  </div>
+  <div class="row"><a href="sms:">Text</a></div>
+  <div class="row"><a href="message://">Email</a></div>
+  <div class="row"><a id="maps" href="maps://">Directions</a></div>
+  <div class="row">
+    <form id="search" autocomplete="off">
+      <label for="q">Search</label>
+      <input id="q" type="search" enterkeyhint="search" placeholder="the internet" aria-label="Search the internet">
+      <button type="submit">Go</button>
+    </form>
+  </div>
+</main>
+
+<main id="setup" hidden>
+  <h1>Make this phone dumb</h1>
+  <p class="lede">About 10 minutes. Nothing gets deleted. Every app stays installed, it just stops opening.</p>
+  <div class="progress"><i id="bar"></i></div>
+  <div class="count" id="count"></div>
+
+  <div id="steps">
+    <div class="step" data-id="home">
+      <input type="checkbox" aria-label="Done">
+      <div class="body">
+        <h2>Put DumDum on your Home Screen</h2>
+        <ol>
+          <li>Open this page in <span class="path">Safari</span>.</li>
+          <li>Tap <span class="path">Share → Add to Home Screen → Add</span>.</li>
+          <li>Open DumDum from the new icon from now on.</li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="step" data-id="grey">
+      <input type="checkbox" aria-label="Done">
+      <div class="body">
+        <h2>Turn the screen black and white</h2>
+        <p class="path">Settings → Accessibility → Display &amp; Text Size → Color Filters</p>
+        <p>Turn on Color Filters and pick Grayscale.</p>
+      </div>
+    </div>
+
+    <div class="step" data-id="dull">
+      <input type="checkbox" aria-label="Done">
+      <div class="body">
+        <h2>Make it boring</h2>
+        <ol>
+          <li><span class="path">Settings → Accessibility → Motion → Reduce Motion</span>: on.</li>
+          <li><span class="path">Settings → Wallpaper</span>: choose a plain black colour.</li>
+          <li><span class="path">Settings → Notifications</span>: turn off Allow Notifications for every app except Phone, Messages and Mail.</li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="step" data-id="maps">
+      <input type="checkbox" aria-label="Done">
+      <div class="body">
+        <h2>Pick your one directions app</h2>
+        <p>The Directions button opens this one. Allow only this one in the next steps.</p>
+        <div class="choice" id="mapchoice">
+          <button type="button" data-map="apple">Apple Maps</button>
+          <button type="button" data-map="google">Google Maps</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="step" data-id="downtime">
+      <input type="checkbox" aria-label="Done">
+      <div class="body">
+        <h2>Block everything, all day</h2>
+        <p class="path">Settings → Screen Time → Downtime</p>
+        <ol>
+          <li>If Screen Time is off, turn on App &amp; Website Activity first.</li>
+          <li>Turn on <span class="path">Scheduled</span>, Every Day.</li>
+          <li>Set From <span class="path">4:00 AM</span> To <span class="path">3:59 AM</span>. That covers the whole day.</li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="step" data-id="allowed">
+      <input type="checkbox" aria-label="Done">
+      <div class="body">
+        <h2>Allow only the five</h2>
+        <p class="path">Settings → Screen Time → Always Allowed</p>
+        <ol>
+          <li>Tap the minus next to everything you can remove (FaceTime, and Maps if you chose Google Maps).</li>
+          <li>Tap the plus next to <span class="path">Messages, Mail, Safari</span> and your directions app.</li>
+          <li>Phone is always allowed and cannot be removed.</li>
+        </ol>
+        <p>Safari is your internet search. If DumDum itself shows a time-limit screen later, use the Phone, Messages, Mail, Maps and Safari icons directly. They do the same job.</p>
+      </div>
+    </div>
+
+    <div class="step" data-id="store">
+      <input type="checkbox" aria-label="Done">
+      <div class="body">
+        <h2>Stop new apps, keep the old ones</h2>
+        <p class="path">Settings → Screen Time → Content &amp; Privacy Restrictions → iTunes &amp; App Store Purchases</p>
+        <ol>
+          <li>Turn on Content &amp; Privacy Restrictions.</li>
+          <li>Installing Apps: <span class="path">Don't Allow</span>.</li>
+          <li>Deleting Apps: <span class="path">Don't Allow</span>.</li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="step" data-id="lock">
+      <input type="checkbox" aria-label="Done">
+      <div class="body">
+        <h2>Lock it so you can't cheat</h2>
+        <p class="path">Settings → Screen Time → Lock Screen Time Settings</p>
+        <ol>
+          <li>Have someone you trust type a passcode you don't know. Or write one down, set it, and leave the paper somewhere inconvenient.</li>
+          <li>Go back to Downtime and turn on <span class="path">Block at Downtime</span>.</li>
+        </ol>
+        <p>Without this step, every blocked app offers an "Ignore Limit" button.</p>
+      </div>
+    </div>
+
+    <div class="step" data-id="tidy">
+      <input type="checkbox" aria-label="Done">
+      <div class="body">
+        <h2>Clear the Home Screen</h2>
+        <ol>
+          <li>Drag Phone, Messages, Mail, your directions app and Safari (or DumDum) onto one page.</li>
+          <li>Press and hold empty space, tap the dots above the dock, untick every other page, tap Done.</li>
+        </ol>
+        <p>The hidden apps are still in the App Library, greyed out and blocked.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="note">
+    To undo: Settings → Screen Time → Downtime → turn off Scheduled (needs the passcode), then turn off Color Filters. Your apps come straight back.
+  </div>
+</main>
+
+<nav>
+  <button type="button" data-tab="home" aria-current="page">Home</button>
+  <button type="button" data-tab="setup">Setup</button>
+</nav>
+
+<script>
+(function () {
+  var store = {
+    get: function (k, d) { try { var v = localStorage.getItem(k); return v === null ? d : JSON.parse(v); } catch (e) { return d; } },
+    set: function (k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+  };
+  var $ = function (s) { return document.querySelector(s); };
+  var all = function (s) { return Array.prototype.slice.call(document.querySelectorAll(s)); };
+
+  // Clock
+  function tick() {
+    var d = new Date();
+    $('#time').textContent = d.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }).replace(/\s?[AP]M$/i, '');
+    $('#date').textContent = d.toLocaleDateString([], { weekday: 'long', month: 'long', day: 'numeric' });
+  }
+  tick();
+  setInterval(tick, 5000);
+
+  // Tabs
+  function show(tab) {
+    $('#home').hidden = tab !== 'home';
+    $('#setup').hidden = tab !== 'setup';
+    all('nav button').forEach(function (b) {
+      if (b.dataset.tab === tab) b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current');
+    });
+    window.scrollTo(0, 0);
+  }
+  all('nav button').forEach(function (b) { b.addEventListener('click', function () { show(b.dataset.tab); }); });
+
+  // Phone
+  $('#call').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var n = $('#num').value.replace(/[^\d+*#]/g, '');
+    if (n) location.href = 'tel:' + n;
+    else $('#num').focus();
+  });
+
+  // Search
+  $('#search').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var q = $('#q').value.trim();
+    if (!q) { $('#q').focus(); return; }
+    $('#q').value = '';
+    $('#q').blur();
+    window.open('https://duckduckgo.com/?q=' + encodeURIComponent(q), '_blank');
+  });
+
+  // Directions app choice
+  var MAPS = { apple: 'maps://', google: 'comgooglemaps://' };
+  function setMap(m) {
+    if (!MAPS[m]) m = 'apple';
+    store.set('dd.map', m);
+    $('#maps').href = MAPS[m];
+    all('#mapchoice button').forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.map === m)); });
+  }
+  all('#mapchoice button').forEach(function (b) { b.addEventListener('click', function () { setMap(b.dataset.map); }); });
+  setMap(store.get('dd.map', 'apple'));
+
+  // Setup checklist
+  var done = store.get('dd.done', {});
+  var steps = all('.step');
+  function render() {
+    var n = 0;
+    steps.forEach(function (s) {
+      var on = !!done[s.dataset.id];
+      s.querySelector('input').checked = on;
+      s.classList.toggle('done', on);
+      if (on) n++;
+    });
+    $('#bar').style.width = (100 * n / steps.length) + '%';
+    $('#count').textContent = n === steps.length ? 'DONE. YOUR PHONE IS DUMB.' : n + ' OF ' + steps.length + ' DONE';
+  }
+  steps.forEach(function (s) {
+    s.querySelector('input').addEventListener('change', function (e) {
+      done[s.dataset.id] = e.target.checked;
+      store.set('dd.done', done);
+      render();
+    });
+  });
+  render();
+
+  // First visit lands on Setup; once anything is ticked, land on Home.
+  show(Object.keys(done).some(function (k) { return done[k]; }) ? 'home' : 'setup');
+
+  if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(function () {});
+})();
+</script>
+</body>
+</html>

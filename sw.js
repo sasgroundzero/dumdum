@@ -1,5 +1,5 @@
 // Network first, cache fallback: the home screen keeps working with no signal.
-const CACHE = 'dumdum-v1';
+const CACHE = 'dumdum-v2';
 const FILES = ['./', 'index.html', 'manifest.webmanifest', 'icon-180.png', 'icon-512.png'];
 
 self.addEventListener('install', (e) => {

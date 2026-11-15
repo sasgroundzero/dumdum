@@ -39,7 +39,7 @@
   .row > a::after { content: "→"; color: var(--dim); }
   .row > a:active, button:active { opacity: .5; }
   .row label { font-size: 22px; flex: 0 0 auto; margin-right: 14px; }
-  input[type=tel], input[type=search] {
+  input[type=tel], input[type=search], input[type=text] {
     flex: 1; min-width: 0; height: 44px; padding: 0 10px;
     background: var(--bg); color: var(--fg); font: inherit; font-size: 17px;
     border: 0; border-bottom: 1px solid var(--dim); border-radius: 0;
@@ -73,6 +73,20 @@
   .choice button { margin: 0; flex: 1; background: var(--bg); color: var(--fg); border: 1px solid var(--line); }
   .choice button[aria-pressed=true] { background: var(--fg); color: var(--bg); border-color: var(--fg); }
 
+  /* Phone */
+  .seg { margin: 26px 0 6px; }
+  .item { border-top: 1px solid var(--line); display: flex; align-items: center; min-height: 64px; gap: 8px; }
+  .item:last-child { border-bottom: 1px solid var(--line); }
+  .item .who { flex: 1; min-width: 0; color: var(--fg); text-decoration: none; padding: 10px 0; }
+  .item .who:active { opacity: .5; }
+  .item .who b { display: block; font-weight: 400; font-size: 19px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .item .who small { display: block; color: var(--dim); font-size: 13px; }
+  .item button, .ghost { margin: 0; background: var(--bg); color: var(--fg); border: 1px solid var(--line); font-size: 14px; padding: 0 12px; }
+  .empty { color: var(--dim); font-size: 15px; padding: 18px 0; border-top: 1px solid var(--line); }
+  .add { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 22px; }
+  .add input { flex: 1 1 100%; }
+  .add button { margin: 0; flex: 1; }
+
   nav { display: flex; max-width: 480px; width: 100%; margin: 24px auto 0; border-top: 1px solid var(--line); }
   nav button { flex: 1; margin: 0; height: 52px; background: var(--bg); color: var(--dim);
     text-transform: uppercase; letter-spacing: 2px; font-size: 13px; }
@@ -87,13 +101,7 @@
     <div class="date" id="date">&nbsp;</div>
   </div>
 
-  <div class="row">
-    <form id="call" autocomplete="off">
-      <label for="num">Phone</label>
-      <input id="num" type="tel" inputmode="tel" placeholder="number" aria-label="Phone number">
-      <button type="submit">Call</button>
-    </form>
-  </div>
+  <div class="row"><a href="#" id="openphone">Phone</a></div>
   <div class="row"><a href="sms:">Text</a></div>
   <div class="row"><a href="message://">Email</a></div>
   <div class="row"><a id="maps" href="maps://">Directions</a></div>
@@ -104,6 +112,36 @@
       <button type="submit">Go</button>
     </form>
   </div>
+</main>
+
+<main id="phone" hidden>
+  <h1>Phone</h1>
+  <div class="row">
+    <form id="call" autocomplete="off">
+      <input id="num" type="tel" inputmode="tel" placeholder="number" aria-label="Phone number">
+      <button type="submit">Call</button>
+    </form>
+  </div>
+
+  <div class="choice seg" id="phonetabs">
+    <button type="button" data-list="people">People</button>
+    <button type="button" data-list="recents">Recents</button>
+  </div>
+
+  <section id="people">
+    <div id="peoplelist"></div>
+    <form class="add" id="addperson" autocomplete="off">
+      <input id="pname" type="text" placeholder="name" aria-label="Name" autocapitalize="words">
+      <input id="pnum" type="tel" inputmode="tel" placeholder="number" aria-label="Number">
+      <button type="submit">Save person</button>
+      <button type="button" class="ghost" id="import" hidden>Import from iPhone</button>
+    </form>
+  </section>
+
+  <section id="recents" hidden>
+    <div id="recentlist"></div>
+    <div class="add"><button type="button" class="ghost" id="clearlog">Clear call log</button></div>
+  </section>
 </main>
 
 <main id="setup" hidden>
@@ -254,8 +292,7 @@
 
   // Tabs
   function show(tab) {
-    $('#home').hidden = tab !== 'home';
-    $('#setup').hidden = tab !== 'setup';
+    ['home', 'phone', 'setup'].forEach(function (t) { $('#' + t).hidden = tab !== t; });
     all('nav button').forEach(function (b) {
       if (b.dataset.tab === tab) b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current');
     });
@@ -263,13 +300,133 @@
   }
   all('nav button').forEach(function (b) { b.addEventListener('click', function () { show(b.dataset.tab); }); });
 
-  // Phone
+  // Phone: people and call log are kept on this phone only (localStorage).
+  var people = store.get('dd.people', []);   // [{name, n}]
+  var log = store.get('dd.log', []);         // [{n, t}] newest first
+  var clean = function (n) { return String(n || '').replace(/[^\d+*#]/g, ''); };
+  var key = function (n) { return clean(n).replace(/\D/g, '').slice(-9); };
+  function nameFor(n) {
+    var k = key(n);
+    for (var i = 0; i < people.length; i++) if (k && key(people[i].n) === k) return people[i].name;
+    return '';
+  }
+  function when(t) {
+    var d = new Date(t), now = new Date();
+    var time = d.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+    return d.toDateString() === now.toDateString() ? time
+      : d.toLocaleDateString([], { month: 'short', day: 'numeric' }) + ', ' + time;
+  }
+  function call(n) {
+    n = clean(n);
+    if (!n) return;
+    log.unshift({ n: n, t: Date.now() });
+    log = log.slice(0, 100);
+    store.set('dd.log', log);
+    renderPhone();
+    location.href = 'tel:' + n;
+  }
+  function el(tag, text, cls) {
+    var e = document.createElement(tag);
+    if (text) e.textContent = text;
+    if (cls) e.className = cls;
+    return e;
+  }
+  function item(title, sub, n, buttons) {
+    var row = el('div', '', 'item');
+    var who = el('a', '', 'who');
+    who.href = '#';
+    who.appendChild(el('b', title));
+    who.appendChild(el('small', sub));
+    who.addEventListener('click', function (e) { e.preventDefault(); call(n); });
+    row.appendChild(who);
+    buttons.forEach(function (b) {
+      var btn = el('button', b[0]);
+      btn.type = 'button';
+      btn.addEventListener('click', b[1]);
+      row.appendChild(btn);
+    });
+    return row;
+  }
+  function savePeople() {
+    people.sort(function (a, b) { return a.name.localeCompare(b.name); });
+    store.set('dd.people', people);
+    renderPhone();
+  }
+  function addPerson(name, n) {
+    name = String(name || '').trim(); n = clean(n);
+    if (!name || !n) return false;
+    var k = key(n);
+    people = people.filter(function (p) { return key(p.n) !== k; });
+    people.push({ name: name, n: n });
+    return true;
+  }
+  function renderPhone() {
+    var pl = $('#peoplelist'), rl = $('#recentlist');
+    pl.textContent = ''; rl.textContent = '';
+    if (!people.length) pl.appendChild(el('div', 'No one saved yet. Add the few people you actually call.', 'empty'));
+    people.forEach(function (p) {
+      pl.appendChild(item(p.name, p.n, p.n, [
+        ['Text', function () { location.href = 'sms:' + p.n; }],
+        ['Remove', function () {
+          if (!confirm('Remove ' + p.name + '?')) return;
+          people = people.filter(function (x) { return x !== p; });
+          savePeople();
+        }]
+      ]));
+    });
+    if (!log.length) rl.appendChild(el('div', 'No calls yet. Calls you make from here are listed.', 'empty'));
+    log.forEach(function (c) {
+      var name = nameFor(c.n);
+      rl.appendChild(item(name || c.n, (name ? c.n + ' · ' : '') + when(c.t), c.n, name ? [] : [
+        ['Save', function () {
+          var nm = prompt('Name for ' + c.n);
+          if (addPerson(nm, c.n)) savePeople();
+        }]
+      ]));
+    });
+    $('#clearlog').hidden = !log.length;
+  }
+  function showList(which) {
+    $('#people').hidden = which !== 'people';
+    $('#recents').hidden = which !== 'recents';
+    all('#phonetabs button').forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.list === which)); });
+  }
+  all('#phonetabs button').forEach(function (b) { b.addEventListener('click', function () { showList(b.dataset.list); }); });
+  $('#openphone').addEventListener('click', function (e) { e.preventDefault(); show('phone'); });
   $('#call').addEventListener('submit', function (e) {
     e.preventDefault();
-    var n = $('#num').value.replace(/[^\d+*#]/g, '');
-    if (n) location.href = 'tel:' + n;
-    else $('#num').focus();
+    var n = clean($('#num').value);
+    if (!n) { $('#num').focus(); return; }
+    $('#num').value = '';
+    call(n);
   });
+  $('#addperson').addEventListener('submit', function (e) {
+    e.preventDefault();
+    if (!addPerson($('#pname').value, $('#pnum').value)) {
+      ($('#pname').value.trim() ? $('#pnum') : $('#pname')).focus();
+      return;
+    }
+    $('#pname').value = ''; $('#pnum').value = '';
+    savePeople();
+  });
+  $('#clearlog').addEventListener('click', function () {
+    if (!confirm('Clear the call log?')) return;
+    log = [];
+    store.set('dd.log', log);
+    renderPhone();
+  });
+  // Only shown where the browser can hand over chosen contacts (off by default on iPhone).
+  if (navigator.contacts && navigator.contacts.select) {
+    $('#import').hidden = false;
+    $('#import').addEventListener('click', function () {
+      navigator.contacts.select(['name', 'tel'], { multiple: true }).then(function (picked) {
+        picked.forEach(function (c) { addPerson((c.name || [])[0], (c.tel || [])[0]); });
+        savePeople();
+      }).catch(function () {});
+    });
+  }
+  renderPhone();
+  showList('people');
 
   // Search
   $('#search').addEventListener('submit', function (e) {

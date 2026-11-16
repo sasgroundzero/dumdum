@@ -3,9 +3,9 @@
 Turns an iPhone into a dumb phone without deleting anything.
 
 - A black and white home screen web app with eight things: Phone (with saved people and a call log), Text, Email, Calendar, Directions, Clock, shuffle-only Music, Search.
-- A built-in setup checklist that uses iOS Screen Time to block every other app all day, and Color Filters to make the screen greyscale.
+- A built-in setup checklist that creates a "Dumb" Focus mode: one switch hides other apps, closes them if opened, quiets notifications and turns the screen greyscale. It does not use Screen Time or Downtime.
 
-Every app stays installed. They are hidden and blocked, and come back when you turn Downtime off.
+Every app stays installed and comes back the moment Dumb mode is switched off.
 
 ## Put it on your phone
 
@@ -15,7 +15,7 @@ Every app stays installed. They are hidden and blocked, and come back when you t
 
 ## Why it is not a native app
 
-iOS does not let an app replace the home screen, and the only way an app can block other apps is Apple's Screen Time system, which is already built into Settings. DumDum walks you through that directly, so no Mac, Xcode or developer account is needed.
+iOS does not let an app replace the home screen or close other apps. DumDum gets the same effect with a Focus mode and a few Shortcuts automations that you set up once, so no Mac, Xcode or developer account is needed.
 
 ## Files
 

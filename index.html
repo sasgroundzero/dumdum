@@ -149,7 +149,7 @@
 
 <main id="setup" hidden>
   <h1>Make this phone dumb</h1>
-  <p class="lede">About 10 minutes. Nothing gets deleted. Every app stays installed, it just stops opening.</p>
+  <p class="lede">About 15 minutes, once. Nothing gets deleted and no Screen Time settings are changed. One switch turns it all on and off.</p>
   <div class="progress"><i id="bar"></i></div>
   <div class="count" id="count"></div>
 
@@ -169,35 +169,9 @@
     <div class="step" data-id="grey">
       <input type="checkbox" aria-label="Done">
       <div class="body">
-        <h2>Turn the screen black and white</h2>
+        <h2>Choose black and white</h2>
         <p class="path">Settings → Accessibility → Display &amp; Text Size → Color Filters</p>
-        <p>Turn on Color Filters and pick Grayscale.</p>
-      </div>
-    </div>
-
-    <div class="step" data-id="dull">
-      <input type="checkbox" aria-label="Done">
-      <div class="body">
-        <h2>Make it boring</h2>
-        <ol>
-          <li><span class="path">Settings → Accessibility → Motion → Reduce Motion</span>: on.</li>
-          <li><span class="path">Settings → Wallpaper</span>: choose a plain black colour.</li>
-          <li><span class="path">Settings → Notifications</span>: turn off Allow Notifications for every app except Phone, Messages and Mail.</li>
-        </ol>
-      </div>
-    </div>
-
-    <div class="step" data-id="auto">
-      <input type="checkbox" aria-label="Done">
-      <div class="body">
-        <h2>Make the one-tap Dull and Reset switches</h2>
-        <p>Two shortcuts let DumDum apply the screen settings for you, and put them back.</p>
-        <ol>
-          <li>Open <span class="path">Shortcuts</span>, tap <span class="path">+</span>, and add these actions, each set to <span class="path">On</span>: <span class="path">Set Color Filters</span>, <span class="path">Set Reduce Motion</span>, <span class="path">Set Reduce Transparency</span>. Name it exactly <span class="path">DumDum Dull</span>.</li>
-          <li>Make a second shortcut with the same three actions set to <span class="path">Off</span>. Name it exactly <span class="path">DumDum Reset</span>.</li>
-          <li>Optional, to re-apply it by itself: Shortcuts → <span class="path">Automation → + → Time of Day</span>, daily, Run Immediately, action <span class="path">Run Shortcut → DumDum Dull</span>.</li>
-        </ol>
-        <p>The two buttons are at the bottom of this page.</p>
+        <p>Turn on Color Filters, pick <span class="path">Grayscale</span>, then turn Color Filters off again. Dumb mode will switch it on for you.</p>
       </div>
     </div>
 
@@ -205,38 +179,11 @@
       <input type="checkbox" aria-label="Done">
       <div class="body">
         <h2>Pick your one directions app</h2>
-        <p>The Directions button opens this one. Allow only this one in the next steps.</p>
+        <p>The Directions button opens this one.</p>
         <div class="choice" id="mapchoice">
           <button type="button" data-map="apple">Apple Maps</button>
           <button type="button" data-map="google">Google Maps</button>
         </div>
-      </div>
-    </div>
-
-    <div class="step" data-id="downtime">
-      <input type="checkbox" aria-label="Done">
-      <div class="body">
-        <h2>Block everything, all day</h2>
-        <p class="path">Settings → Screen Time → Downtime</p>
-        <ol>
-          <li>If Screen Time is off, turn on App &amp; Website Activity first.</li>
-          <li>Turn on <span class="path">Scheduled</span>, Every Day.</li>
-          <li>Set From <span class="path">4:00 AM</span> To <span class="path">3:59 AM</span>. That covers the whole day.</li>
-        </ol>
-      </div>
-    </div>
-
-    <div class="step" data-id="allowed">
-      <input type="checkbox" aria-label="Done">
-      <div class="body">
-        <h2>Allow only what's on the list</h2>
-        <p class="path">Settings → Screen Time → Always Allowed</p>
-        <ol>
-          <li>Tap the minus next to everything you can remove (FaceTime, and Maps if you chose Google Maps).</li>
-          <li>Tap the plus next to <span class="path">Messages, Mail, Safari, Calendar, Clock, Shortcuts</span> and your directions app. If Clock isn't listed, it is already allowed.</li>
-          <li>Phone is always allowed and cannot be removed.</li>
-        </ol>
-        <p>Safari is your internet search. Shortcuts is what runs the Music button. If DumDum itself shows a time-limit screen later, use the Phone, Messages, Mail, Calendar, Maps, Clock and Safari icons directly. They do the same job.</p>
       </div>
     </div>
 
@@ -249,7 +196,7 @@
           <li>Choose <span class="path">Google</span>, <span class="path">Microsoft Exchange</span> or <span class="path">Outlook.com</span> and sign in. On older iPhones the path is Settings → Calendar → Accounts.</li>
           <li>Make sure the <span class="path">Calendars</span> switch is on for each account.</li>
         </ol>
-        <p>The Calendar button opens the iPhone's Calendar, which then stays in sync with those accounts both ways. The Clock button opens the iPhone's Clock for alarms, timers and the stopwatch.</p>
+        <p>The Calendar button opens the iPhone's Calendar, which stays in sync with those accounts both ways. The Clock button opens the iPhone's Clock for alarms, timers and the stopwatch.</p>
       </div>
     </div>
 
@@ -265,58 +212,89 @@
           <li>Tap the arrow on the action and set <span class="path">Shuffle</span> to <span class="path">Songs</span>.</li>
           <li>Name the shortcut exactly <span class="path">DumDum Shuffle</span> and tap Done.</li>
         </ol>
-        <p>The Music button now starts a shuffle. Pause and skip from the Lock Screen or your headphones. The Music app itself stays blocked, so there is no searching or browsing.</p>
-      </div>
-    </div>
-
-    <div class="step" data-id="store">
-      <input type="checkbox" aria-label="Done">
-      <div class="body">
-        <h2>Stop new apps, keep the old ones</h2>
-        <p class="path">Settings → Screen Time → Content &amp; Privacy Restrictions → iTunes &amp; App Store Purchases</p>
-        <ol>
-          <li>Turn on Content &amp; Privacy Restrictions.</li>
-          <li>Installing Apps: <span class="path">Don't Allow</span>.</li>
-          <li>Deleting Apps: <span class="path">Don't Allow</span>.</li>
-        </ol>
-      </div>
-    </div>
-
-    <div class="step" data-id="lock">
-      <input type="checkbox" aria-label="Done">
-      <div class="body">
-        <h2>Lock it so you can't cheat</h2>
-        <p class="path">Settings → Screen Time → Lock Screen Time Settings</p>
-        <ol>
-          <li>Have someone you trust type a passcode you don't know. Or write one down, set it, and leave the paper somewhere inconvenient.</li>
-          <li>Go back to Downtime and turn on <span class="path">Block at Downtime</span>.</li>
-        </ol>
-        <p>Without this step, every blocked app offers an "Ignore Limit" button.</p>
+        <p>The Music button now starts a shuffle. Pause and skip from the Lock Screen or your headphones.</p>
       </div>
     </div>
 
     <div class="step" data-id="tidy">
       <input type="checkbox" aria-label="Done">
       <div class="body">
-        <h2>Clear the Home Screen</h2>
+        <h2>Make one plain Home Screen page</h2>
         <ol>
-          <li>Drag Phone, Messages, Mail, Calendar, Clock, your directions app and Safari (or DumDum) onto one page.</li>
-          <li>Press and hold empty space, tap the dots above the dock, untick every other page, tap Done.</li>
+          <li>Drag DumDum, Phone, Messages, Mail, Calendar, Clock, Safari and your directions app onto one page of their own.</li>
+          <li>Leave your other pages as they are. Dumb mode hides them and brings them back.</li>
         </ol>
-        <p>The hidden apps are still in the App Library, greyed out and blocked.</p>
+      </div>
+    </div>
+
+    <div class="step" data-id="focus">
+      <input type="checkbox" aria-label="Done">
+      <div class="body">
+        <h2>Create the Dumb mode</h2>
+        <p class="path">Settings → Focus → + → Custom</p>
+        <ol>
+          <li>Name it exactly <span class="path">Dumb</span>.</li>
+          <li><span class="path">People</span>: allow notifications from everyone, so calls and texts still arrive.</li>
+          <li><span class="path">Apps</span>: allow only Phone, Messages, Mail, Calendar and Clock.</li>
+          <li><span class="path">Customize Screens → Home Screen</span>: tick only the plain page from the last step.</li>
+          <li><span class="path">Options</span>: turn on Hide Notification Badges.</li>
+        </ol>
+        <p>This uses Focus only. It does not touch Screen Time, Downtime or any app limits already on the phone.</p>
+      </div>
+    </div>
+
+    <div class="step" data-id="look">
+      <input type="checkbox" aria-label="Done">
+      <div class="body">
+        <h2>Make Dumb mode turn the screen grey</h2>
+        <p class="path">Shortcuts → Automation → +</p>
+        <ol>
+          <li>Choose <span class="path">Dumb</span>, then <span class="path">When Turning On</span> and <span class="path">Run Immediately</span>.</li>
+          <li>Add three actions, each set to <span class="path">On</span>: <span class="path">Set Color Filters</span>, <span class="path">Set Reduce Motion</span>, <span class="path">Set Reduce Transparency</span>. Tap Done.</li>
+          <li>Make a second automation the same way with <span class="path">When Turning Off</span> and the three actions set to <span class="path">Off</span>.</li>
+        </ol>
+        <p>Leaving Dumb mode now puts the screen back to normal by itself.</p>
+      </div>
+    </div>
+
+    <div class="step" data-id="bounce">
+      <input type="checkbox" aria-label="Done">
+      <div class="body">
+        <h2>Send other apps back to the Home Screen</h2>
+        <p class="path">Shortcuts → Automation → + → App</p>
+        <ol>
+          <li>Tap <span class="path">Choose</span> and tick every app you want kept out of reach. Leave the eight DumDum uses unticked.</li>
+          <li>Choose <span class="path">Is Opened</span> and <span class="path">Run Immediately</span>.</li>
+          <li>Add <span class="path">Get Current Focus</span>.</li>
+          <li>Add <span class="path">If</span>. Tap <span class="path">Current Focus</span>, choose <span class="path">Name</span>, set it to <span class="path">is</span> and type <span class="path">Dumb</span>.</li>
+          <li>Inside the If, add <span class="path">Go to Home Screen</span>. Tap Done.</li>
+        </ol>
+        <p>In Dumb mode those apps now close as soon as they open. Outside Dumb mode they work as usual. Tick newly installed apps here when you add them.</p>
+      </div>
+    </div>
+
+    <div class="step" data-id="switch">
+      <input type="checkbox" aria-label="Done">
+      <div class="body">
+        <h2>Make the on and off switch</h2>
+        <ol>
+          <li>In <span class="path">Shortcuts</span>, tap <span class="path">+</span> and add <span class="path">Set Focus</span>. Set it to turn <span class="path">Dumb</span> <span class="path">On</span>. Name it exactly <span class="path">DumDum On</span>.</li>
+          <li>Make a second one that turns <span class="path">Dumb</span> <span class="path">Off</span>. Name it exactly <span class="path">DumDum Off</span>.</li>
+        </ol>
+        <p>The two buttons at the bottom of this page run them. You can also switch Dumb mode from Control Centre → Focus.</p>
       </div>
     </div>
   </div>
 
-  <h1>Screen settings</h1>
-  <p class="lede">Needs the two shortcuts from the Dull and Reset step. Reset only changes the look. It does not unblock apps.</p>
+  <h1>Dumb mode</h1>
+  <p class="lede">Works once the setup above is done.</p>
   <div class="choice">
-    <button type="button" data-run="DumDum Dull">Make it dull</button>
-    <button type="button" data-run="DumDum Reset">Reset look</button>
+    <button type="button" data-run="DumDum On">Go dumb</button>
+    <button type="button" data-run="DumDum Off">Go normal</button>
   </div>
 
   <div class="note">
-    To undo: Settings → Screen Time → Downtime → turn off Scheduled (needs the passcode), then turn off Color Filters. Your apps come straight back.
+    On: other pages hidden, other apps bounce shut, notifications quiet, screen grey. Off: everything is back exactly as it was.
   </div>
 </main>
 

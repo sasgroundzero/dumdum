@@ -27,13 +27,13 @@
   [hidden] { display: none !important; }
 
   /* Home */
-  .clock { padding: 44px 0 36px; }
+  .clock { padding: 32px 0 26px; }
   .time { font-size: 64px; line-height: 1; letter-spacing: -2px; font-variant-numeric: tabular-nums; }
   .date { color: var(--dim); margin-top: 10px; text-transform: uppercase; letter-spacing: 2px; font-size: 13px; }
 
   .row { border-top: 1px solid var(--line); }
   .row:last-child { border-bottom: 1px solid var(--line); }
-  .row > a, .row > form { display: flex; align-items: center; min-height: 68px; }
+  .row > a, .row > form { display: flex; align-items: center; min-height: 56px; }
   .row a { color: var(--fg); text-decoration: none; }
   .row > a { justify-content: space-between; font-size: 22px; }
   .row > a::after { content: "→"; color: var(--dim); }
@@ -104,7 +104,10 @@
   <div class="row"><a href="#" id="openphone">Phone</a></div>
   <div class="row"><a href="sms:">Text</a></div>
   <div class="row"><a href="message://">Email</a></div>
+  <div class="row"><a href="calshow://">Calendar</a></div>
   <div class="row"><a id="maps" href="maps://">Directions</a></div>
+  <div class="row"><a href="clock-alarm://">Clock</a></div>
+  <div class="row"><a href="shortcuts://run-shortcut?name=DumDum%20Shuffle">Music</a></div>
   <div class="row">
     <form id="search" autocomplete="off">
       <label for="q">Search</label>
@@ -212,14 +215,43 @@
     <div class="step" data-id="allowed">
       <input type="checkbox" aria-label="Done">
       <div class="body">
-        <h2>Allow only the five</h2>
+        <h2>Allow only what's on the list</h2>
         <p class="path">Settings → Screen Time → Always Allowed</p>
         <ol>
           <li>Tap the minus next to everything you can remove (FaceTime, and Maps if you chose Google Maps).</li>
-          <li>Tap the plus next to <span class="path">Messages, Mail, Safari</span> and your directions app.</li>
+          <li>Tap the plus next to <span class="path">Messages, Mail, Safari, Calendar, Clock, Shortcuts</span> and your directions app. If Clock isn't listed, it is already allowed.</li>
           <li>Phone is always allowed and cannot be removed.</li>
         </ol>
-        <p>Safari is your internet search. If DumDum itself shows a time-limit screen later, use the Phone, Messages, Mail, Maps and Safari icons directly. They do the same job.</p>
+        <p>Safari is your internet search. Shortcuts is what runs the Music button. If DumDum itself shows a time-limit screen later, use the Phone, Messages, Mail, Calendar, Maps, Clock and Safari icons directly. They do the same job.</p>
+      </div>
+    </div>
+
+    <div class="step" data-id="cal">
+      <input type="checkbox" aria-label="Done">
+      <div class="body">
+        <h2>Connect your calendars</h2>
+        <p class="path">Settings → Apps → Calendar → Calendar Accounts → Add Account</p>
+        <ol>
+          <li>Choose <span class="path">Google</span>, <span class="path">Microsoft Exchange</span> or <span class="path">Outlook.com</span> and sign in. On older iPhones the path is Settings → Calendar → Accounts.</li>
+          <li>Make sure the <span class="path">Calendars</span> switch is on for each account.</li>
+        </ol>
+        <p>The Calendar button opens the iPhone's Calendar, which then stays in sync with those accounts both ways. The Clock button opens the iPhone's Clock for alarms, timers and the stopwatch.</p>
+      </div>
+    </div>
+
+    <div class="step" data-id="music">
+      <input type="checkbox" aria-label="Done">
+      <div class="body">
+        <h2>Make the shuffle-only Music button</h2>
+        <p>Works with Apple Music or songs synced to the Music app.</p>
+        <ol>
+          <li>Open the <span class="path">Shortcuts</span> app and tap <span class="path">+</span>.</li>
+          <li>Add the action <span class="path">Play Music</span>.</li>
+          <li>Tap the word <span class="path">Music</span> in the action and choose a playlist, or your whole library.</li>
+          <li>Tap the arrow on the action and set <span class="path">Shuffle</span> to <span class="path">Songs</span>.</li>
+          <li>Name the shortcut exactly <span class="path">DumDum Shuffle</span> and tap Done.</li>
+        </ol>
+        <p>The Music button now starts a shuffle. Pause and skip from the Lock Screen or your headphones. The Music app itself stays blocked, so there is no searching or browsing.</p>
       </div>
     </div>
 
@@ -254,7 +286,7 @@
       <div class="body">
         <h2>Clear the Home Screen</h2>
         <ol>
-          <li>Drag Phone, Messages, Mail, your directions app and Safari (or DumDum) onto one page.</li>
+          <li>Drag Phone, Messages, Mail, Calendar, Clock, your directions app and Safari (or DumDum) onto one page.</li>
           <li>Press and hold empty space, tap the dots above the dock, untick every other page, tap Done.</li>
         </ol>
         <p>The hidden apps are still in the App Library, greyed out and blocked.</p>

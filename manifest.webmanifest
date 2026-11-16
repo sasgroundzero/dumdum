@@ -1,7 +1,7 @@
 {
   "name": "DumDum",
   "short_name": "DumDum",
-  "description": "A black and white home screen with phone, text, email, directions and search. Nothing else.",
+  "description": "A black and white home screen with phone, text, email, calendar, directions, clock, music and search. Nothing else.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",

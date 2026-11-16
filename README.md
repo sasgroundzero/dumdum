@@ -2,7 +2,7 @@
 
 Turns an iPhone into a dumb phone without deleting anything.
 
-- A black and white home screen web app with five things: Phone, Text, Email, Directions, Search.
+- A black and white home screen web app with eight things: Phone (with saved people and a call log), Text, Email, Calendar, Directions, Clock, shuffle-only Music, Search.
 - A built-in setup checklist that uses iOS Screen Time to block every other app all day, and Color Filters to make the screen greyscale.
 
 Every app stays installed. They are hidden and blocked, and come back when you turn Downtime off.

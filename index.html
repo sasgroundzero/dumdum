@@ -187,6 +187,20 @@
       </div>
     </div>
 
+    <div class="step" data-id="auto">
+      <input type="checkbox" aria-label="Done">
+      <div class="body">
+        <h2>Make the one-tap Dull and Reset switches</h2>
+        <p>Two shortcuts let DumDum apply the screen settings for you, and put them back.</p>
+        <ol>
+          <li>Open <span class="path">Shortcuts</span>, tap <span class="path">+</span>, and add these actions, each set to <span class="path">On</span>: <span class="path">Set Color Filters</span>, <span class="path">Set Reduce Motion</span>, <span class="path">Set Reduce Transparency</span>. Name it exactly <span class="path">DumDum Dull</span>.</li>
+          <li>Make a second shortcut with the same three actions set to <span class="path">Off</span>. Name it exactly <span class="path">DumDum Reset</span>.</li>
+          <li>Optional, to re-apply it by itself: Shortcuts → <span class="path">Automation → + → Time of Day</span>, daily, Run Immediately, action <span class="path">Run Shortcut → DumDum Dull</span>.</li>
+        </ol>
+        <p>The two buttons are at the bottom of this page.</p>
+      </div>
+    </div>
+
     <div class="step" data-id="maps">
       <input type="checkbox" aria-label="Done">
       <div class="body">
@@ -292,6 +306,13 @@
         <p>The hidden apps are still in the App Library, greyed out and blocked.</p>
       </div>
     </div>
+  </div>
+
+  <h1>Screen settings</h1>
+  <p class="lede">Needs the two shortcuts from the Dull and Reset step. Reset only changes the look. It does not unblock apps.</p>
+  <div class="choice">
+    <button type="button" data-run="DumDum Dull">Make it dull</button>
+    <button type="button" data-run="DumDum Reset">Reset to normal</button>
   </div>
 
   <div class="note">
@@ -480,6 +501,12 @@
   }
   all('#mapchoice button').forEach(function (b) { b.addEventListener('click', function () { setMap(b.dataset.map); }); });
   setMap(store.get('dd.map', 'apple'));
+
+  all('[data-run]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      location.href = 'shortcuts://run-shortcut?name=' + encodeURIComponent(b.dataset.run);
+    });
+  });
 
   // Setup checklist
   var done = store.get('dd.done', {});
